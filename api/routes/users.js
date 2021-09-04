@@ -1,118 +1,149 @@
-//here i will initial user , get , update ,getall and so on !
-
-
+const User = require("../models/User");
 const router = require("express").Router();
-const {users} = require("../models");
 const bcrypt = require("bcrypt");
 
-//update user//i mean here update information in usermodel like pass, city,... (user accont jusy if valid id or admin else error//403//You can update only your account!)
+//update user
 router.put("/:id", async (req, res) => {
-    if (req.body.userId === req.params.id || req.body.isAdmin) {
-        //first if user want to update password 
-        //send new pass in body 
-        //generate new pass and hashed it then update it 
-      if (req.body.password) {
-        try {
-
-          const salt = await bcrypt.genSalt(10);
-          req.body.password = await bcrypt.hash(req.body.password, salt);
-        } catch (err) {
-          return res.status(500).json(err);
-        }
-      }
-     // here when i try to update user acoount info (infi in model )
+  if (req.body.userId === req.params.id || req.body.isAdmin) {
+    if (req.body.password) {
       try {
-        let id = parseInt(req.params.id);
-        const obj = req.body;
-        let found = await users.findOne({ where: {id: id} });
-        let updatedRecord = await found.update(obj);
-        
-        res.status(200).json("Account has been updated");
+        const salt = await bcrypt.genSalt(10);
+        req.body.password = await bcrypt.hash(req.body.password, salt);
       } catch (err) {
-          console.log(err);
         return res.status(500).json(err);
       }
-    } else {
-      return res.status(403).json("You can update only your account!");
     }
-  });
-  
-
+    try {
+      const user = await User.findByPk(req.params.id)
+      await (user.username = req.body.username)
+      await (user.email = req.body.email)
+      await (user.password = req.body.password)
+      await user.save();
+      res.status(200).json("Account has been updated");
+    } catch (err) {
+      return res.status(500).json(err);
+    }
+  } else {
+    return res.status(403).json("You can update only your account!");
+  }
+});
 
 //delete user
 router.delete("/:id", async (req, res) => {
-    if (req.body.userId === req.params.id || req.body.isAdmin) {
-      try {
-        let id = parseInt(req.params.id);
-        let deletedRecord = await users.destroy({where: {id: id}});
-        res.status(200).json("Account has been deleted");
-      } catch (err) {
-        return res.status(500).json(err);
-      }
-    } else {
-      return res.status(403).json("You can delete only your account!");
-    }
-  });
-//get a user
-
-router.get("/:id", async (req, res) => {
+  if (req.body.userId === req.params.id || req.body.isAdmin) {
     try {
-        const id = parseInt(req.params.id);
-        let user = await users.findOne({ where: {id: id} });
-        //not necessary properties // dont want to get it 
-        // delete user.dataValues['password']
-        const { password, updatedAt, ...other } = user.dataValues;
-      res.status(200).json(other);
+      const user = await User.findByPk(req.params.id);
+      await user.destroy();
+      res.status(200).json("Account has been deleted");
     } catch (err) {
-        console.log(err);
-      res.status(500).json(err);
+      return res.status(500).json(err);
     }
-  });
-//get all users X because in real social media apps i did not do get all users 
+  } else {
+    return res.status(403).json("You can delete only your account!");
+  }
+});
+
+//get a user
+router.get("/", async (req, res) => {
+  const userId = req.query.userId;
+  const username = req.query.username;
+  try {
+    const user = userId ?
+      await User.findByPk(userId) :
+      await User.findOne({
+        where: {
+          username: username
+        }
+      });
+    const {
+      password,
+      updatedAt,
+      ...other
+    } = user.dataValues;
+    res.status(200).json(other);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+//get friends
+router.get("/friends/:userId", async (req, res) => {
+  try {
+    const user = await User.findByPk(req.params.userId);
+    const friends = await Promise.all(
+      user.followings.map((friendId) => {
+        return User.findByPk(friendId);
+      })
+    );
+    let friendList = [];
+    friends.map((friend) => {
+      const {
+        _id,
+        username,
+        profilePicture
+      } = friend;
+      friendList.push({
+        _id,
+        username,
+        profilePicture
+      });
+    });
+    res.status(200).json(friendList)
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
 //follow a user
 
-
 router.put("/:id/follow", async (req, res) => {
-    if (req.body.userId !== req.params.id) {
-      try {
-         //user to foolow (updatre followers , add current user  )
-         const id = (req.params.id);
-        const user = await users.findOne({ where: {id: id} });
-       //user want to foolow (update following , add user )
-       const userId = (req.body.userId);
-        const currentUser = await users.findOne({ where: {id: userId} });
-        if (!user.followers.includes(req.body.userId)) {
-            await user.update({ $push: { followers:req.body.userId  } });
-           
-            await currentUser.update({ $push: { followings: req.params.id } });
-        //   await user.followers.push( req.body.userId);
-        //   await user.update({
-        //     followers: user.followers
-        //   });
-        //   await currentUser.followings.push(req.params.id);
-        //   await currentUser.update({
-        //     followings: user.followings
-        //   });
-          res.status(200).json(user);
-          console.log(user);
-        } else {
-          res.status(403).json("you allready follow this user");
-        }
-      } catch (err) {
-          console.log(err);
-        // res.status(500).json(err);
+  if (req.body.userId !== req.params.id) {
+    try {
+      const userId = req.body.userId
+      const user = await User.findByPk(req.params.id);
+      const currentUser = await User.findByPk(req.body.userId);
+      console.log(typeof (userId.toString()));
+      if (!user.followers.includes(userId.toString())) {
+        await user.followers.push(req.body.userId)
+        await user.changed('followers', true);
+        await user.save()
+        await currentUser.followings.push(req.params.id)
+        await currentUser.changed('followings', true);
+        await currentUser.save()
+        res.status(200).json("user has been followed");
+      } else {
+        res.status(403).json("you allready follow this user");
       }
-    } 
-    //if ! is false , meaning same user 
-    else {
-      res.status(403).json("you cant follow yourself");
+    } catch (err) {
+      res.status(500).json(err);
     }
-  });
+  } else {
+    res.status(403).json("you cant follow yourself");
+  }
+});
+
 //unfollow a user
 
-//testing 
-router.get('/',(req,res)=>{
-    res.send('hey its user routes!!');
-})
+router.put("/:id/unfollow", async (req, res) => {
+  if (req.body.userId !== req.params.id) {
+    try {
+      const user = await User.findByPk(req.params.id);
+      const currentUser = await User.findByPk(req.body.userId);
+      if (user.followers.includes(req.body.userId)) {
+        await user.followers.pull(req.body.userId);
+        await user.save()
+        await currentUser.followings.pull(req.params.id);
+        await currentUser.save
+        res.status(200).json("user has been unfollowed");
+      } else {
+        res.status(403).json("you dont follow this user");
+      }
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  } else {
+    res.status(403).json("you cant unfollow yourself");
+  }
+});
 
 module.exports = router;
