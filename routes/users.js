@@ -15,9 +15,7 @@ router.put("/:id", async (req, res) => {
     }
     try {
       const user = await User.findByPk(req.params.id)
-      await (user.username = req.body.username)
-      await (user.email = req.body.email)
-      await (user.password = req.body.password)
+      await user.update(req.body)
       await user.save();
       res.status(200).json("Account has been updated");
     } catch (err) {
@@ -102,7 +100,6 @@ router.put("/:id/follow", async (req, res) => {
       const userId = req.body.userId
       const user = await User.findByPk(req.params.id);
       const currentUser = await User.findByPk(req.body.userId);
-      console.log(typeof (userId.toString()));
       if (!user.followers.includes(userId.toString())) {
         await user.followers.push(req.body.userId)
         await user.changed('followers', true);
@@ -123,17 +120,19 @@ router.put("/:id/follow", async (req, res) => {
 });
 
 //unfollow a user
-
 router.put("/:id/unfollow", async (req, res) => {
   if (req.body.userId !== req.params.id) {
     try {
+      const userId = req.body.userId
       const user = await User.findByPk(req.params.id);
       const currentUser = await User.findByPk(req.body.userId);
-      if (user.followers.includes(req.body.userId)) {
-        await user.followers.pull(req.body.userId);
+      if (user.followers.includes(userId.toString())) {
+        await user.followers.pop(req.body.userId);
+        await user.changed('followers', true);
         await user.save()
-        await currentUser.followings.pull(req.params.id);
-        await currentUser.save
+        await currentUser.followings.pop(req.params.id);
+        await currentUser.changed('followings', true);
+        await currentUser.save()
         res.status(200).json("user has been unfollowed");
       } else {
         res.status(403).json("you dont follow this user");

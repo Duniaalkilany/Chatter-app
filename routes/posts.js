@@ -5,6 +5,7 @@ const User = require("../models/User");
 //create a post
 
 router.post("/", async (req, res) => {
+  await Post.sync()
   const newPost = Post.build(req.body);
   try {
     const savedPost = await newPost.save();
@@ -13,15 +14,15 @@ router.post("/", async (req, res) => {
     res.status(500).json(err);
   }
 });
-//update a post
 
+//update a post
 router.put("/:id", async (req, res) => {
   try {
     const post = await Post.findByPk(req.params.id);
-    if (post.userId === req.body.userId) {
-      await (post.userId = req.body.userId);
-      await (post.desc = req.body.desc)
-      await post.save()
+    console.log(post.userId);
+    console.log(req.body.userId);
+    if (post.userId == req.body.userId) {
+      await post.update(req.body)
       res.status(200).json("the post has been updated");
     } else {
       res.status(403).json("you can update only your post");
@@ -35,8 +36,8 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   try {
     const post = await Post.findByPk(req.params.id);
-    if (post.userId === req.body.userId) {
-      await post.deleteOne();
+    if (post.userId == req.body.userId) {
+      await post.destroy();
       res.status(200).json("the post has been deleted");
     } else {
       res.status(403).json("you can delete only your post");
@@ -50,12 +51,14 @@ router.delete("/:id", async (req, res) => {
 router.put("/:id/like", async (req, res) => {
   try {
     const post = await Post.findByPk(req.params.id);
-    if (!post.likes.includes(req.body.userId)) {
+    if (!post.likes.includes((req.body.userId).toString())) {
       await post.likes.push(req.body.userId)
+      await post.changed('likes', true);
       await post.save()
       res.status(200).json("The post has been liked");
     } else {
-      await post.likes.pull(req.body.userId)
+      await post.likes.pop(req.body.userId)
+      await post.changed('likes', true);
       await post.save()
       res.status(200).json("The post has been disliked");
     }
@@ -79,11 +82,12 @@ router.get("/:id", async (req, res) => {
 router.get("/timeline/:userId", async (req, res) => {
   try {
     const currentUser = await User.findByPk(req.params.userId);
-    const userPosts = await Post.find({
+    const userPosts = await Post.findOne({
       where: {
-        userId: currentUser._id
+        userId: currentUser.dataValues.id
       }
     });
+    console.log(userPosts);
     const friendPosts = await Promise.all(
       currentUser.followings.map((friendId) => {
         return Post.find({
