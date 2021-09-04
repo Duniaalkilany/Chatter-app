@@ -3,9 +3,11 @@ const {
   DataTypes
 } = require('sequelize');
 
-const sequelize = new Sequelize('postgres://localhost:5432/saif')
+const sequelize = new Sequelize('postgres://localhost:5432/dunia')
 
-const UserSchema = sequelize.define('User', {
+
+
+const UserSchema = sequelize.define('User-proj', {
   username: {
     type: DataTypes.STRING,
     allowNull: false,
