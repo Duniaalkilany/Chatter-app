@@ -19,7 +19,7 @@ const router = express.Router();
 
 dotenv.config();
 
-const sequelize = new Sequelize('postgres://localhost:5432/saif')
+const sequelize = new Sequelize('postgres://localhost:5432/dunia')
 
 app.use("/images", express.static(path.join(__dirname, "public/images")));
 

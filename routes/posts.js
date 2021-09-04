@@ -79,18 +79,33 @@ router.get("/:id", async (req, res) => {
 
 //get timeline posts
 
+
+
+//get timeline posts
+
+
 router.get("/timeline/:userId", async (req, res) => {
   try {
-    const currentUser = await User.findByPk(req.params.userId);
-    const userPosts = await Post.findOne({
+let userId =(req.params.userId)
+
+    const currentUser = await User.findByPk(userId);
+    console.log('hhhhhhhhhhhhhhhhhh', userId);
+    if(typeof userId == "string")
+    console.log("string value");
+  else
+    console.log("Not a string");
+    const userPosts = await Post.findAll({
       where: {
-        userId: currentUser.dataValues.id
+       
+        userId:currentUser.id.toString()
       }
     });
-    console.log(userPosts);
+    console.log('hhhhhhhhhhhhhhhhhh', userPosts );
+   
     const friendPosts = await Promise.all(
       currentUser.followings.map((friendId) => {
-        return Post.find({
+        return Post.findAll({
+          
           where: {
             userId: friendId
           }
@@ -99,7 +114,8 @@ router.get("/timeline/:userId", async (req, res) => {
     );
     res.status(200).json(userPosts.concat(...friendPosts));
   } catch (err) {
-    res.status(500).json(err);
+    // res.status(500).json(err);
+    console.log(err);
   }
 });
 
@@ -112,9 +128,9 @@ router.get("/profile/:username", async (req, res) => {
         username: req.params.username
       }
     });
-    const posts = await Post.find({
+    const posts = await Post.findAll({
       where: {
-        userId: user._id
+        userId: user.id.toString()
       }
     });
     res.status(200).json(posts);
