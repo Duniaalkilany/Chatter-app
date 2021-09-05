@@ -1,9 +1,7 @@
 const router = require("express").Router();
 const Post = require("../models/Post");
 const User = require("../models/User");
-
 //create a post
-
 router.post("/", async (req, res) => {
   await Post.sync()
   const newPost = Post.build(req.body);
@@ -14,7 +12,6 @@ router.post("/", async (req, res) => {
     res.status(500).json(err);
   }
 });
-
 //update a post
 router.put("/:id", async (req, res) => {
   try {
@@ -32,7 +29,6 @@ router.put("/:id", async (req, res) => {
   }
 });
 //delete a post
-
 router.delete("/:id", async (req, res) => {
   try {
     const post = await Post.findByPk(req.params.id);
@@ -47,7 +43,6 @@ router.delete("/:id", async (req, res) => {
   }
 });
 //like  a post
-
 router.put("/:id/like", async (req, res) => {
   try {
     const post = await Post.findByPk(req.params.id);
@@ -67,7 +62,6 @@ router.put("/:id/like", async (req, res) => {
   }
 });
 //get a post
-
 router.get("/:id", async (req, res) => {
   try {
     const post = await Post.findByPk(req.params.id);
@@ -76,17 +70,10 @@ router.get("/:id", async (req, res) => {
     res.status(500).json(err);
   }
 });
-
-
-
-
-
 //get timeline posts
-
 router.get("/timeline/:userId", async (req, res) => {
   try {
 let userId =(req.params.userId)
-
     const currentUser = await User.findByPk(userId);
     console.log('hhhhhhhhhhhhhhhhhh', userId);
     if(typeof userId == "string")
@@ -95,16 +82,13 @@ let userId =(req.params.userId)
     console.log("Not a string");
     const userPosts = await Post.findAll({
       where: {
-       
         userId:currentUser.id.toString()
       }
     });
-    console.log('hhhhhhhhhhhhhhhhhh', userPosts );
-   
+    console.log('h', userPosts );
     const friendPosts = await Promise.all(
       currentUser.followings.map((friendId) => {
-        return Post.findAll({
-          
+        return Post.findAll({   
           where: {
             userId: friendId
           }
@@ -117,9 +101,7 @@ let userId =(req.params.userId)
     console.log(err);
   }
 });
-
 //get user's all posts
-
 router.get("/profile/:username", async (req, res) => {
   try {
     const user = await User.findOne({
