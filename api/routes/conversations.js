@@ -3,8 +3,9 @@
 
 const router = require("express").Router();
 const Conversation = require("../models/Conversation");
-const {Sequelize } = require("sequelize");
+const Sequelize = require('sequelize');
 
+const Op = Sequelize.Op;
 // create new conv
 router.post("/", async (req, res) => {
   await Conversation.sync()
@@ -37,7 +38,7 @@ router.get("/:userId", async (req, res) => {
     const conversation = await Conversation.findAll({
       where: {
         members: {
-          [Sequelize.Op.in]: [userId]
+          [Sequelize.Op.contains]: [userId]
         },
         
       // members: { $in: [userId] },
