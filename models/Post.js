@@ -5,7 +5,6 @@ const {
 
 const sequelize = new Sequelize('postgres://localhost:5432/dunia')
 
-
 const PostSchema = sequelize.define('Post-proj', {
   userId: {
     type: DataTypes.STRING,
