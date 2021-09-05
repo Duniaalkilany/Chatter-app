@@ -61,23 +61,26 @@ router.get("/:userId", async (req, res) => {
     console.log(conversation);
     res.status(200).json(conversation);
   } catch (err) {
-    // res.status(500).json(err);
- console.log(err);
+    res.status(500).json(err);
+
   }
 });
 // get conv includes two userId
 router.get("/find/:firstUserId/:secondUserId", async (req, res) => {
   try {
+    let firstUserId =(req.params.firstUserId).toString()
+    let secondUserId =(req.params.secondUserId).toString()
     const conversation = await Conversation.findOne({
       where: {
-        members: {
-          [Sequelize.Op.all]: [req.params.firstUserId, req.params.secondUserId]
-        },
+        members: [firstUserId,secondUserId]
+         
+        ,
       }
     });
     res.status(200).json(conversation)
   } catch (err) {
-    res.status(500).json(err);
+    // res.status(500).json(err);
+    console.log(err);
   }
 });
 
