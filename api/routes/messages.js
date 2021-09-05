@@ -4,6 +4,7 @@ const Message = require("../models/Message");
 //add
 
 router.post("/", async (req, res) => {
+  await Message.sync()
   const newMessage = Message.build(req.body);
 
   try {
@@ -18,9 +19,10 @@ router.post("/", async (req, res) => {
 
 router.get("/:conversationId", async (req, res) => {
   try {
-    const messages = await Message.find({
+    let conversationId =(req.params.conversationId).toString()
+    const messages = await Message.findAll({
       where: {
-        conversationId: req.params.conversationId,
+        conversationId: conversationId,
       }
     });
     res.status(200).json(messages);
