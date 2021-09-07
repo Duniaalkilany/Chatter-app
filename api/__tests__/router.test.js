@@ -7,15 +7,6 @@ const {app} = require('../server.js');
 const request = supertest(app);
 
 
-
-
-
-
-
-
-
-
-
 // ROUTE tests and Error tests start here //
 describe('testing routes', () => {
 //93
@@ -120,7 +111,6 @@ const deletebody  = {
 //     });
   
 
-
   //get by id ... read by id//
   it('should get user by id  ', async () => {
     const response = await request.get('/api/users/92');
@@ -128,11 +118,7 @@ const deletebody  = {
     expect(response.status).toEqual(200);
     expect(response.body).toBeDefined();
   });
-  
-
-
-  
-  
+ 
     //PUT request, updates user
     test('can update an existing user', async () => {
   
@@ -156,7 +142,7 @@ const deletebody  = {
 });
 
 //unfollow users  //
-it('follow users ', async () => {
+it('unfollow users ', async () => {
   const response = await request.put('/api/users/7/unfollow').send(follow);
   expect(follow.userId).toEqual('92');
   expect(response.status).toEqual(403);
