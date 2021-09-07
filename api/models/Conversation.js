@@ -11,11 +11,7 @@ const ConversationSchema = sequelize.define('conversation-proj', {
     defaultValue: [],
   }
 
-}
-
-
-
-)
+})
 
 
 
