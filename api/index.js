@@ -4,10 +4,23 @@ const dotenv = require("dotenv");
 const helmet = require("helmet");
 const morgan = require("morgan");
 const multer = require("multer");
-const path = require("path");
+
+const path = require('path');
+const http = require('http');
+const socketio = require('socket.io');
+const server = http.createServer(app);
+const io = socketio(server);
+app.use(express.static(path.join(__dirname, './public')));
+
 const {
   Sequelize
 } = require('sequelize');
+
+io.on('connection', socket => {
+  console.log('connected ' + socket.id);
+
+  socket.emit('message', formatMessage(botName, 'Welcome to Chat-Stream!'));
+})
 
 const userRoute = require("./routes/users");
 const authRoute = require("./routes/auth");
@@ -19,7 +32,7 @@ const router = express.Router();
 
 dotenv.config();
 
-const sequelize = new Sequelize('postgres://localhost:5432/dunia')
+const sequelize = new Sequelize('postgres://localhost:5432/saif')
 
 
 //middleware
@@ -63,3 +76,5 @@ app.listen(8800, async () => {
 
   console.log("Backend server is running!");
 });
+
+module.exports = io;

@@ -3,7 +3,7 @@ const {
   DataTypes
 } = require('sequelize');
 
-const sequelize = new Sequelize('postgres://localhost:5432/dunia')
+const sequelize = new Sequelize('postgres://localhost:5432/saif')
 
 const PostSchema = sequelize.define('Post-proj', {
   userId: {
