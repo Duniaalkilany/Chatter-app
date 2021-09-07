@@ -19,7 +19,7 @@ const {
 io.on('connection', socket => {
   console.log('connected ' + socket.id);
 
-  socket.emit('message', formatMessage(botName, 'Welcome to Chat-Stream!'));
+  socket.emit('message', 'Welcome to Chat-Stream!');
 })
 
 const userRoute = require("./routes/users");
@@ -66,7 +66,7 @@ app.use("/api/posts", postRoute);
 app.use("/api/conversations", conversationRoute);
 app.use("/api/messages", messageRoute);
 
-app.listen(8800, async () => {
+server.listen(8800, async () => {
   try {
     await sequelize.authenticate();
     console.log('Connection has been established successfully.');
@@ -76,5 +76,3 @@ app.listen(8800, async () => {
 
   console.log("Backend server is running!");
 });
-
-module.exports = io;

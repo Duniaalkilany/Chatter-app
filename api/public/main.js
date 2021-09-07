@@ -1,7 +1,4 @@
-const options = {
-    transports: ['websocket'],
-};
-const socket = io('localhost:8800/', options);
+const socket = io();
 
 socket.on('message', (message) => {
     console.log(message);
