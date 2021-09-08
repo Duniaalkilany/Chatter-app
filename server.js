@@ -42,6 +42,19 @@ app.use("/api/posts", postRoute);
 app.use("/api/conversations", conversationRoute);
 app.use("/api/messages", messageRoute);
 
+
+//testing 
+app.get('/',(req,res)=>{
+  res.send('welcome to homepage!!');
+})
+
+
+
+
+
+
+
+
 let users = [];
 
 const addUser = (userId, socketId) => {
