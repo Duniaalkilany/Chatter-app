@@ -42,7 +42,7 @@ router.delete("/:id", async (req, res) => {
     res.status(500).json(err);
   }
 });
-//like  a post
+//like  a post//dislike a post
 router.put("/:id/like", async (req, res) => {
   try {
     const post = await Post.findByPk(req.params.id);
@@ -75,7 +75,7 @@ router.get("/timeline/:userId", async (req, res) => {
   try {
 let userId =(req.params.userId)
     const currentUser = await User.findByPk(userId);
-    console.log('hhhhhhhhhhhhhhhhhh', userId);
+    console.log('userId:', userId);
     if(typeof userId == "string")
     console.log("string value");
   else
@@ -85,7 +85,7 @@ let userId =(req.params.userId)
         userId:currentUser.id.toString()
       }
     });
-    console.log('h', userPosts );
+    console.log('userPosts:', userPosts );
     const friendPosts = await Promise.all(
       currentUser.followings.map((friendId) => {
         return Post.findAll({   
@@ -97,7 +97,7 @@ let userId =(req.params.userId)
     );
     res.status(200).json(userPosts.concat(...friendPosts));
   } catch (err) {
-    // res.status(500).json(err);
+    res.status(500).json(err);
     console.log(err);
   }
 });

@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const Message = require("../models/Message");
-//add
+//add//post message in conv 
 router.post("/", async (req, res) => {
   await Message.sync()
   const newMessage = Message.build(req.body);
