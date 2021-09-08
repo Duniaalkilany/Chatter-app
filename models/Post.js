@@ -1,9 +1,13 @@
+'use strict';
+require('dotenv').config();
+
 const {
   Sequelize,
   DataTypes
 } = require('sequelize');
+const sequelize = new Sequelize(process.env.DATABASE_URL)
+// 'postgres://localhost:5432/dunia'
 
-const sequelize = new Sequelize('postgres://localhost:5432/dunia')
 
 const PostSchema = sequelize.define('Post-proj', {
   userId: {
