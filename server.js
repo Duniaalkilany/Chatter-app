@@ -24,9 +24,16 @@ const messageRoute = require("./routes/messages");
 
 const router = express.Router();
 
-dotenv.config();
+// dotenv.config();
 
-const sequelize = new Sequelize('postgres://localhost:5432/dunia')
+require('dotenv').config();
+
+
+const sequelize = new Sequelize(process.env.DATABASE_URL)
+// 'postgres://localhost:5432/dunia'
+
+
+// const sequelize = new Sequelize('postgres://localhost:5432/dunia')
 
 
 //middleware
