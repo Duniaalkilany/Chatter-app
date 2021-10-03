@@ -39,41 +39,41 @@ router.delete("/:id", async (req, res) => {
   }
 });
 //get a user
-router.get("/:id", async (req, res) => {
-  try {
-      const id = parseInt(req.params.id);
-      let user = await User.findOne({ where: {id: id} });
-      //not necessary properties // dont want to get it 
-      // delete user.dataValues['password']
-      const { password, updatedAt, ...other } = user.dataValues;
-    res.status(200).json(other);
-  } catch (err) {
-      console.log(err);
-    res.status(500).json(err);
-  }
-});
-// router.get("/", async (req, res) => {
-//   const userId = req.query.userId;
-//   const username = req.query.username;
+// router.get("/:id", async (req, res) => {
 //   try {
-//     const user = userId ?
-//       await User.findByPk(userId) :
-//       await User.findOne({
-//         where: {
-//           username: username
-//         }
-//       });
-//     const {
-//       password,
-//       updatedAt,
-//       ...other
-//     } = user.dataValues;
+//       const id = parseInt(req.params.id);
+//       let user = await User.findOne({ where: {id: id} });
+//       //not necessary properties // dont want to get it 
+//       // delete user.dataValues['password']
+//       const { password, updatedAt, ...other } = user.dataValues;
 //     res.status(200).json(other);
 //   } catch (err) {
-//     // res.status(500).json(err);
-//     console.log(err);
+//       console.log(err);
+//     res.status(500).json(err);
 //   }
 // });
+router.get("/", async (req, res) => {
+  const userId = req.query.userId;
+  const username = req.query.username;
+  try {
+    const user = userId 
+    ? await User.findByPk(userId)
+    : await User.findOne({
+        where: {
+          username: username
+        }
+      });
+    const {
+      password,
+      updatedAt,
+      ...other
+    } = user.dataValues;
+    res.status(200).json(other);
+  } catch (err) {
+    // res.status(500).json(err);
+    console.log(err);
+  }
+});
 
 //get friends//followings list
 router.get("/friends/:userId", async (req, res) => {

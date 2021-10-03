@@ -1,3 +1,6 @@
+
+
+
 const {
   Sequelize,
   DataTypes
@@ -68,8 +71,9 @@ const UserSchema = sequelize.define('User-proj', {
     },
   },
   relationship: {
-    type: DataTypes.ENUM(['1', '2', '3']),
+    type: DataTypes.ENUM(["1", "2", "3"]),
   },
+  
 });
 
 module.exports = UserSchema
