@@ -10,7 +10,7 @@ const http = require('http');
 const socketio = require('socket.io');
 const server = http.createServer(app);
 const io = socketio(server);
-app.use(express.static(path.join(__dirname, './public')));
+app.use("/images", express.static(path.join(__dirname, "public/images")));
 
 const {
   Sequelize
@@ -49,6 +49,14 @@ const storage = multer.diskStorage({
   },
 });
 
+
+
+app.use(express.static(path.join(__dirname, './public')));
+app.use("/api/auth", authRoute);
+app.use("/api/users", userRoute);
+app.use("/api/posts", postRoute);
+app.use("/api/conversations", conversationRoute);
+app.use("/api/messages", messageRoute);
 const upload = multer({
   storage: storage
 });
@@ -59,13 +67,6 @@ app.post("/api/upload", upload.single("file"), (req, res) => {
     console.error(error);
   }
 });
-
-app.use("/api/auth", authRoute);
-app.use("/api/users", userRoute);
-app.use("/api/posts", postRoute);
-app.use("/api/conversations", conversationRoute);
-app.use("/api/messages", messageRoute);
-
 const start = (port) => {
   server.listen(port, async () => {
     try {

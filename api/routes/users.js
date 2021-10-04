@@ -76,6 +76,33 @@ router.get("/", async (req, res) => {
 });
 
 //get friends//followings list
+// router.get("/friends/:userId", async (req, res) => {
+//   try {
+//     const user = await User.findByPk(req.params.userId);
+//     const friends = await Promise.all(
+//       user.followings.map((friendId) => {
+//         return User.findByPk(friendId);
+//       })
+//     );
+//     let friendList = [];
+//     friends.map((friend) => {
+//       const {
+//         id,
+//         username,
+//         profilePicture
+//       } = friend;
+//       friendList.push({
+//       id,
+//         username,
+//         profilePicture
+//       });
+//     });
+//     res.status(200).json(friendList)
+//   } catch (err) {
+//     res.status(500).json(err);
+//     console.log(err);
+//   }
+// });
 router.get("/friends/:userId", async (req, res) => {
   try {
     const user = await User.findByPk(req.params.userId);
@@ -87,12 +114,12 @@ router.get("/friends/:userId", async (req, res) => {
     let friendList = [];
     friends.map((friend) => {
       const {
-        _id,
+        id,
         username,
         profilePicture
       } = friend;
       friendList.push({
-        _id,
+        id,
         username,
         profilePicture
       });

@@ -7,9 +7,11 @@ router.post("/", async (req, res) => {
   const newPost = Post.build(req.body);
   try {
     const savedPost = await newPost.save();
+    console.log("ffffffffffffffffffffffffffff",savedPost);
     res.status(200).json(savedPost);
   } catch (err) {
     res.status(500).json(err);
+    console.log(err);
   }
 });
 //update a post
@@ -26,6 +28,7 @@ router.put("/:id", async (req, res) => {
     }
   } catch (err) {
     res.status(500).json(err);
+    console.log(err);
   }
 });
 //delete a post

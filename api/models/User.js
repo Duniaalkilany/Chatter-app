@@ -41,11 +41,11 @@ const UserSchema = sequelize.define('User-proj', {
     defaultValue: '',
   },
   followers: {
-    type: DataTypes.ARRAY(DataTypes.STRING),
+    type: DataTypes.ARRAY(DataTypes.NUMBER),
     defaultValue: [],
   },
   followings: {
-    type: DataTypes.ARRAY(DataTypes.STRING),
+    type: DataTypes.ARRAY(DataTypes.NUMBER),
     defaultValue: [],
   },
   isAdmin: {
