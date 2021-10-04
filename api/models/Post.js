@@ -1,19 +1,16 @@
-const {
-  Sequelize,
-  DataTypes
-} = require('sequelize');
+const { Sequelize, DataTypes } = require('sequelize');
 
-const sequelize = new Sequelize('postgres://localhost:5432/dunia')
+const sequelize = new Sequelize('postgres://localhost:5432/saif');
 
 const PostSchema = sequelize.define('Post-proj', {
   userId: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
   },
   desc: {
     type: DataTypes.STRING,
     validate: {
-      len: [0, 500]
+      len: [0, 500],
     },
   },
   img: {
