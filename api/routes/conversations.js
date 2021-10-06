@@ -33,7 +33,7 @@ router.post("/", async (req, res) => {
 //get all convs of a user
 router.get("/:userId", async (req, res) => {
   try {
-    let userId = (req.params.userId).toString()
+    let userId = (req.params.userId)
     const conversation = await Conversation.findAll({
       where: {
         members: {
@@ -47,6 +47,7 @@ router.get("/:userId", async (req, res) => {
     res.status(200).json(conversation);
   } catch (err) {
     res.status(500).json(err);
+    console.log(err);
 
   }
 });

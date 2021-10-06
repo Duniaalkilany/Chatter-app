@@ -5,7 +5,7 @@ const {
 
 const sequelize = new Sequelize('postgres://localhost:5432/dunia')
 
-const MessageSchema = sequelize.define('Message', {
+const MessageSchema = sequelize.define('proj-message', {
   conversationId: {
     type: DataTypes.STRING,
   },
